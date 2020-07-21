@@ -1,6 +1,8 @@
 package com.example.taskreminder;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,30 +16,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListV extends AppCompatActivity {
-    ListView listView;
+    RecyclerView listView;
     ArrayAdapter<String> arrayAdapter;
-    List<String> tasks;
-    List<String> Event;
+    CustomAdapter adapter;
+    List<Event> eventList;
+
+    List<String> Events;
+    List<String> Eventtype;
     Database base;
     int count=1;
     public void initItems()
     {
-        tasks = new ArrayList<>();
+        Events = new ArrayList<>();
         Intent i1=getIntent();
-        String strtask =i1.getStringExtra("message_task");
-        tasks.add(strtask);
-        Event = new ArrayList<>();
+        String strtask =i1.getStringExtra("message_event");
+        Events.add(strtask);
+        Eventtype = new ArrayList<>();
         Intent i3=getIntent();
-        String streve=i3.getStringExtra("message_event");
-        Event.add(streve);
+        String streve=i3.getStringExtra("message_eventtype");
+        Eventtype.add(streve);
         count=count+1;
     }
     public void init_list_view(){
-        initItems();
-        arrayAdapter=new ArrayAdapter(this,R.layout.list_view,R.id.custom_text,tasks);
-        listView.setAdapter(arrayAdapter);
-        arrayAdapter=new ArrayAdapter(this,R.layout.list_view,R.id.event_text,Event);
-        listView.setAdapter(arrayAdapter);
+
+
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,9 @@ public class ListV extends AppCompatActivity {
         final String date =i2.getStringExtra("message_date");
         listView=findViewById(R.id.list_view);
         init_list_view();
+
+
+        /*
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -54,6 +59,23 @@ public class ListV extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"This task is scheduled for "+date,Toast.LENGTH_LONG).show();
             }
         });
+         */
+
+        base = new Database(getApplicationContext());
+        eventList = new ArrayList<>();
+        eventList = base.viewEvents();
+        //initItems();
+
+        //Task tsk = new Task();
+        //tsk.setDate("somedate");
+        //tsk.setEvent("Event Name");
+        //tsk.setTask("some task");
+        //taskList.add(tsk);
+        Toast.makeText(getApplicationContext(), "got " + eventList.size(), Toast.LENGTH_LONG).show();
+        adapter = new CustomAdapter(getApplicationContext(),eventList);
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
+        listView.setLayoutManager(manager);
+        listView.setAdapter(adapter);
     }
 
 }

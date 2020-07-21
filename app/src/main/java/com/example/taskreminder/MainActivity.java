@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -24,8 +25,11 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     LinearLayout L1;
-    EditText edttask, edtdate;
-    Button btnsubmittask;
+    EditText edtevent, edtdate;
+    String streventtype;
+    Button btnsubmitevent;
+    Database base;
+    RadioGroup rg_event;
     RadioButton rbbday,rbann,rbapp;
 
     @Override
@@ -58,45 +62,67 @@ public class MainActivity extends AppCompatActivity {
         rbbday=findViewById(R.id.rb_bday);
         rbann=findViewById(R.id.rb_ann);
         rbapp=findViewById(R.id.rb_app);
-        edttask = findViewById(R.id.edt_task);
+        edtevent = findViewById(R.id.edt_event);
         edtdate = findViewById(R.id.edt_date);
-        btnsubmittask = findViewById(R.id.btn_submittask);
-        boolean rbbdaystate=rbbday.isChecked();
-        if(rbbdaystate==true)
+        rg_event = findViewById(R.id.rg_event);
+        btnsubmitevent = findViewById(R.id.btn_submitevent);
+
+        base = new Database(getApplicationContext());
+        int id = rg_event.getCheckedRadioButtonId();
+        if(id == R.id.rb_bday)
         {
-                String strEvent="Birthday";
+                streventtype="Birthday";
                 Intent i3 = new Intent(getApplicationContext(), ListV.class);
-                i3.putExtra("message_event",strEvent);
+                i3.putExtra("message_eventtype",streventtype);
                 startActivity(i3);
             }
-        boolean rbannstate=rbann.isChecked();
-        if(rbannstate==true)
+        if((id == R.id.rb_ann))
         {
-                String strEvent="Anniversary";
+                streventtype="Anniversary";
                 Intent i3 = new Intent(getApplicationContext(), ListV.class);
-                i3.putExtra("message_event",strEvent);
+                i3.putExtra("message_eventtype",streventtype);
                 startActivity(i3);
             }
-        boolean rbappstate=rbapp.isChecked();
-            if(rbappstate==true)
+        if(id == R.id.rb_app)
             {
-                String strEvent="Appointment";
+                streventtype="Appointment";
                 Intent i3 = new Intent(getApplicationContext(), ListV.class);
-                i3.putExtra("message_event",strEvent);
+                i3.putExtra("message_eventtype",streventtype);
                 startActivity(i3);
             }
-        btnsubmittask.setOnClickListener(new View.OnClickListener() {
+        btnsubmitevent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String strtask = edttask.getText().toString();
-                String strtime = edtdate.getText().toString();
+                String strevent = edtevent.getText().toString();
+                String strdate = edtdate.getText().toString();
+                addTask();
                 Intent i1 = new Intent(getApplicationContext(), ListV.class);
-                i1.putExtra("message_task", strtask);
+                i1.putExtra("message_event", strevent);
                 startActivity(i1);
                 Intent i2 = new Intent(getApplicationContext(), ListV.class);
-                i2.putExtra("message_date", strtime);
+                i2.putExtra("message_date", strdate);
                 startActivity(i2);
             }
         });
+    }
+
+    private void addTask() {
+        String events = edtevent.getText().toString();
+        String date = edtdate.getText().toString();
+        String eventtype = streventtype;
+        Toast.makeText(this, "tye" + eventtype, Toast.LENGTH_SHORT).show();
+        Event e = new Event();
+        e.setEvent(events);
+        e.setDate(date);
+        e.setEventty(eventtype);
+        long rowCount=base.saveEvent(e);
+        if(rowCount>0)
+        {
+            Toast.makeText(this, rowCount+"Event created", Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Toast.makeText(this,"no event created",Toast.LENGTH_LONG).show();
+        }
     }
 }

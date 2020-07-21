@@ -14,6 +14,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Task manager application"
-        android:textSize="20dp"></TextView>
+        android:text="Eventing Done Right"
+        android:textColor="#00ACC1"
+        android:textSize="35dp"></TextView>
 </LinearLayout>
